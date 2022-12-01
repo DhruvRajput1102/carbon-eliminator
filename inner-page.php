@@ -5,12 +5,12 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Carbon Eliminator</title>
+    <title>Carbon Eliminator Admin Panel</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="assets/img/f1.jpeg" rel="icon">
+    <link href="assets/img/favicon.jpeg" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
@@ -73,10 +73,8 @@
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-                    <li><a class="nav-link scrollto" href="#about">Footprint Calculator</a></li>
-                    <!-- <li><a class="nav-link scrollto" href="#why-us">Result</a></li> -->
-                    <li><a class="nav-link scrollto" href="#team">Recommendation</a></li>
-                    <li><a class="nav-link scrollto" href="login/index.php">Admin Login</a></li>
+                    <li><a class="nav-link scrollto" href="#why-us">Result</a></li>
+                    <li><a class="nav-link scrollto" href="login/logout.php">Log Out</a></li>
                 <i class="bi bi-list mobile-nav-toggle"></i>
             </nav>
             <!-- .navbar -->
@@ -88,91 +86,15 @@
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="d-flex align-items-center">
         <div class="container position-relative" data-aos="fade-up" data-aos-delay="500">
-            <h1>Welcome to Carbon Eliminator</h1>
+            <h1>Welcome Admin</h1>
             <h2>Net Zero -Grand Prix F1 Canada</h2>
-            <a href="#about" class="btn-get-started scrollto">Get Started</a>
+            <a href="#why-us" class="btn-get-started scrollto">Get Started</a>
         </div>
         
     </section>
     <!-- End Hero -->
 
     <main id="main">
-
-        <!-- ======= About Section ======= -->
-        <section id="about" class="about">
-        <div class="container">
-
-        <section class="section" >
-        <div class="section-title">
-                    <span>Calulate Your Carbon Footprint</span>
-                    <h2>Footprint Calculator</h2>
-                    <p>Get Your Carbon Footprint</p>
-                </div>
-      <div class="row">
-        <div class="col-lg-6" >
-
-          <div class="card" >
-            <div class="card-body" >
-              <h5 class="card-title">Carbon Footprint Calculator</h5>
-
-              <!-- General Form Elements -->
-              <form action="#services" method="post">
-                <div class="row mb-3">
-                  <div class="col-sm-12">
-                    <input type="int" id="ticket" name="ticket" class="form-control" placeholder="Enter Ticket Number">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-sm-12">
-                    <input type="date" id="date" name="date" class="form-control" placeholder="Enter Ticket Number">
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-sm-12">
-                    <select name="mot" id="mode-of-travel" class="form-select" aria-label="Default select example">
-                      <option selected disabled>Select Mode of Travel</option>
-                      <option value="flight" data-value="1">Flight</option>
-                          <option value="carTravel" data-value="2">CarTravel</option>
-                          <option value="motorBike" data-value="3">Motor Bike</option>
-                          <option value="publicTransit" data-value="4">Public Transit</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-sm-12">
-                    <select name="voc" id="choose-vehicle" class="form-select" aria-label="Default select example">
-
-
-                    </select>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-sm-12">
-                    <input type="int" id="distance" name="distance" class="form-control" placeholder="Enter Distance in KM">
-                  </div>
-                </div>
-                
-                <div class="row mb-6">
-                  <div class="col-sm-12">
-                    <button type="submit" name="submit" value="submit" class="btn btn-primary" class="nav-link scrollto" href="#services">Submit</button>
-                  </div>
-                </div>
-
-              </form><!-- End General Form Elements -->
-
-            </div>
-          </div>
-
-        </div>
-        <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left">
-                        <img src="assets/img/racing.jpg" class="img-fluid" alt="">
-                    </div>
-</div>
-
-
-
-        </section>
-        <!-- End About Section -->
         
         <!-- ======= Why Us Section ======= -->
         <?php
@@ -187,6 +109,9 @@
         $car_pie_sql="SELECT SUM(c_footprint) AS 'sum' FROM cal WHERE c_mot= 'carTravel'";
         $bike_pie_sql="SELECT SUM(c_footprint) AS 'sum' FROM cal WHERE c_mot= 'motorBike'";
         $public_pie_sql="SELECT SUM(c_footprint) AS 'sum' FROM cal WHERE c_mot= 'publicTransit'";
+        $total_ticket_sql="SELECT COUNT(t_id) AS 'count' FROM t_info";
+        $cal_ticket_sql="SELECT COUNT(t_id) AS 'count' FROM cal";
+        $total_flight_distance_sql="SELECT SUM(c_distance) AS 'sum' FROM cal WHERE c_mot= 'flight'";
         $o_result=mysqli_query($con,$overall_fp);
         $a_result=mysqli_query($con,$avg_fp);   
         $d_result=mysqli_query($con,$total_distance);
@@ -194,13 +119,20 @@
         $cps_result=mysqli_query($con,$car_pie_sql);
         $bps_result=mysqli_query($con,$bike_pie_sql);
         $pps_result=mysqli_query($con,$public_pie_sql);
+        $tts_result=mysqli_query($con,$total_ticket_sql);
+        $cts_result=mysqli_query($con,$cal_ticket_sql);
+        $tfds_result=mysqli_query($con,$total_flight_distance_sql);
             $o_fp= $o_result->fetch_assoc()['sum'];
-            $a_fp= $a_result->fetch_assoc()['avg'];
+            $a_fp= round($a_result->fetch_assoc()['avg'],2);
             $d_fp= $d_result->fetch_assoc()['dsum'];
             $fps_fp= $fps_result->fetch_assoc()['sum']; 
             $cps_fp= $cps_result->fetch_assoc()['sum'];
             $bps_fp= $bps_result->fetch_assoc()['sum'];
             $pps_fp= $pps_result->fetch_assoc()['sum'];
+            $tts_count= $tts_result->fetch_assoc()['count'];
+            $cts_count= $cts_result->fetch_assoc()['count'];
+            $tfds_count= $tfds_result->fetch_assoc()['sum'];
+            $survey_percentage=round(($cts_count/$tts_count)*100,2);
         ?>
         
         <!-- ======= Services Section ======= -->
@@ -213,7 +145,7 @@
                 <div class="section-title">
                     <span>Result</span>
                     <h2>Result</h2>
-                    <p>Your total carboon emission that you have generated in your travelling for event on <?php echo $date; ?>.</p>
+                    <p>Total carboon emission that you have generated in your travelling for event on <?php echo $date; ?>.</p>
                 </div>
 
                            <div class="row">
@@ -247,79 +179,76 @@
             </div>
         </section>
         <!-- End Services Section -->
+        <!-- Start Why Us Section -->
 
-        <!-- ======= Team Section ======= -->
-        <section id="team" class="team">
+        <section id="why-us" class="why-us">
             <div class="container">
-
-                <div class="section-title">
-                    <span>Recommendation</span>
-                    <h2>Recommendation</h2>
-                    <p>Few Ways To Reduce Personal Carbon FootPrints </p>
+            <div class="section-title">
+                    <span>Result</span>
+                    <h2>Carbon Footprint</h2>
+                    <p>Calculated Data For GP Canada F1 Events</p>
                 </div>
-
                 <div class="row">
-                    
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/duration.jpg" alt="">
-                            <h4>Flight Duration</h4><br>
-                            <span>Fly nonstop since landings and takeoffs use more fuel and produce more emissions.</span>
-                           
+
+                    <div class="col-lg-4" data-aos="fade-up">
+                        <div class="box">
+                            <span><?php echo $o_fp; ?> KG CO2</span>
+                            <h4>Overall Carbon FootPrint<br></h4>
+                            <p><br>                            
+                        </p>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/car.jpg" alt="">
-                            <h4>Choose Car Wisely</h4><br>
-                            <span>If you’re shopping for a new car, consider purchasing a hybrid or electric vehicle</span>
-                            
+                    <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="150">
+                        <div class="box">
+                            <span><?php echo $a_fp; ?> KG CO2</span>
+                            <h4>Average Carbon FootPrint<br><br></h4>
+                            <p></p>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/route.jpg" alt="">
-                            <h4>Route Matters</h4><br>
-                            <span>If you fly for work or pleasure, air travel is probably responsible for the largest part of your carbon footprint. Avoid flying if possible; on shorter trips, driving may emit fewer greenhouse gases.</span>
-                            
+                    <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+                        <div class="box">
+                            <span><?php echo $tfds_count; ?> KM</span>
+                            <h4> Total Distance Traveled By Flights </h4>
+                            <p></p>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/while.jpg" alt="">
-                            <h4>While Driving</h4><br>
-                            <span>Air conditioning and intensive city driving can make emissions creep up. Cut down on these as often as possible.</span>
-                            
+                    <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+                        <div class="box">
+                            <span><?php echo $tts_count; ?></span>
+                            <h4> Numer of Sold Out Tickets </h4>
+                            <p></p>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/carpool.jpg" alt="">
-                            <h4>Carpool</h4><br>
-                            <span>This way, you’re splitting emissions between the number of people in the car.</span>
-                            
+                    <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+                        <div class="box">
+                            <span><?php echo $survey_percentage; ?>%</span>
+                            <h4> People Filled Survey </h4>
+                            <p></p>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                        <div class="member">
-                            <img src="assets/img/team/long.jpg" alt="">
-                            <h4>On Long Drives</h4><br>
-                            <span>Use cruise control on long drives — in most cases, this can help to save gas.</span>
-                            
+                    <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+                        <div class="box">
+                            <span><?php echo $d_fp-$tfds_count; ?> KM</span>
+                            <h4> Total Distance Traveled By Road </h4>
+                            <p></p>
                         </div>
                     </div>
+
 
                 </div>
 
             </div>
+
         </section>
-        <!-- End Team Section -->
-       
+        <!-- End Why Us Section -->
+<br>
+        <div id="chart-container"></div>
+
         <!-- ======= Cta Section ======= -->
         <section id="cta" class="cta">
             <div class="container" data-aos="zoom-in">
@@ -370,7 +299,73 @@
         </section>
         <!-- End Clients Section -->
 
+<!-- ======= Team Section ======= -->
+        <section id="team" class="team">
+            <div class="container">
 
+                <div class="section-title">
+                    <span>Team</span>
+                    <h2>Team</h2>
+                    <p>Sit sint consectetur velit quisquam cupiditate impedit suscipit alias</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+                        <div class="member">
+                            <img src="assets/img/team/team-1.jpg" alt="">
+                            <h4>Walter White</h4>
+                            <span>Chief Executive Officer</span>
+                            <p>
+                                Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut aut
+                            </p>
+                            <div class="social">
+                                <a href=""><i class="bi bi-twitter"></i></a>
+                                <a href=""><i class="bi bi-facebook"></i></a>
+                                <a href=""><i class="bi bi-instagram"></i></a>
+                                <a href=""><i class="bi bi-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+                        <div class="member">
+                            <img src="assets/img/team/team-2.jpg" alt="">
+                            <h4>Sarah Jhinson</h4>
+                            <span>Product Manager</span>
+                            <p>
+                                Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
+                            </p>
+                            <div class="social">
+                                <a href=""><i class="bi bi-twitter"></i></a>
+                                <a href=""><i class="bi bi-facebook"></i></a>
+                                <a href=""><i class="bi bi-instagram"></i></a>
+                                <a href=""><i class="bi bi-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+                        <div class="member">
+                            <img src="assets/img/team/team-3.jpg" alt="">
+                            <h4>William Anderson</h4>
+                            <span>CTO</span>
+                            <p>
+                                Voluptas necessitatibus occaecati quia. Earum totam consequuntur qui porro et laborum toro des clara
+                            </p>
+                            <div class="social">
+                                <a href=""><i class="bi bi-twitter"></i></a>
+                                <a href=""><i class="bi bi-facebook"></i></a>
+                                <a href=""><i class="bi bi-instagram"></i></a>
+                                <a href=""><i class="bi bi-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+        <!-- End Team Section -->
 
         <!-- ======= Contact Section ======= -->
         <section id="contact" class="contact">
@@ -458,7 +453,7 @@
 
                     <div class="col-lg-4 col-md-6">
                         <div class="footer-info">
-                            <h3>carbon Eliminator</h3>
+                            <h3>Day</h3>
                             <p>
                                 A108 Adam Street <br> NY 535022, USA<br><br>
                                 <strong>Phone:</strong> +1 5589 55488 55<br>
